@@ -296,7 +296,6 @@ function Modal({ children, onClose }: { children: React.ReactNode; onClose?: () 
 // ── SCREEN 1 — DASHBOARD ──────────────────────────────────────────────────────
 function DashboardScreen({ onToast, onOpenMetodo }: { onToast: (m: string) => void; onOpenMetodo: () => void }) {
   const [balVis, setBalVis] = useState(true)
-  const [showMenu, setShowMenu] = useState(false)
   const iconBg = `linear-gradient(135deg, rgba(238,66,78,.08), rgba(18,30,108,.08)), ${dt.white}`
 
   const QuickBtn = ({ ico, label, onClick }: { ico: React.ReactNode; label: string; onClick?: () => void }) => (
@@ -392,32 +391,6 @@ function DashboardScreen({ onToast, onOpenMetodo }: { onToast: (m: string) => vo
         </div>
       </div>
 
-      {/* FAB */}
-      <button onClick={() => setShowMenu(true)} style={{ position: 'absolute', right: 20, bottom: 28, width: 56, height: 56, borderRadius: '50%', background: dt.coral, border: 'none', cursor: 'pointer', boxShadow: '0 8px 20px rgba(238,66,78,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 20 }}>
-        <span style={{ fontFamily: F, fontWeight: 800, fontSize: 24, color: dt.white, lineHeight: 1 }}>$</span>
-      </button>
-
-      {showMenu && (
-        <Modal onClose={() => setShowMenu(false)}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <span style={{ fontFamily: F, fontWeight: 700, fontSize: 18, color: dt.navy }}>Elige cómo usar tu dinero</span>
-            <button onClick={() => setShowMenu(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><XIcon /></button>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
-            {[
-              { ico: <TransferIco />, label: 'Transferir', fn: () => { setShowMenu(false); onToast('Próximamente 🚀') } },
-              { ico: <span style={{ fontFamily: F, fontWeight: 800, fontSize: 13, color: dt.coral }}>Bre-B</span>, label: 'Bre-B', fn: () => { setShowMenu(false); onToast('Próximamente 🚀') } },
-              { ico: <BagIco />, label: 'Pagar facturas', fn: () => { setShowMenu(false); onToast('Próximamente 🚀') } },
-              { ico: <DepositIco />, label: 'Depositar', fn: () => { setShowMenu(false); onOpenMetodo() } },
-            ].map(item => (
-              <div key={item.label} onClick={item.fn} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                <div style={{ width: 56, height: 56, borderRadius: 16, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.ico}</div>
-                <span style={{ fontFamily: F, fontSize: 11, fontWeight: 500, color: dt.t1, textAlign: 'center' }}>{item.label}</span>
-              </div>
-            ))}
-          </div>
-        </Modal>
-      )}
     </div>
   )
 }
