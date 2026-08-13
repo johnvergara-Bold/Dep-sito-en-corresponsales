@@ -127,23 +127,50 @@ const SearchIco = () => (
     <line x1="21" y1="21" x2="16.5" y2="16.5" stroke={dt.t2} strokeWidth="1.8" strokeLinecap="round" />
   </svg>
 )
-const BarcodeMini = () => (
-  <svg width="20" height="16" viewBox="0 0 20 16" fill="none">
-    {[0, 2, 4, 5, 7, 9, 11, 13, 14, 16, 18].map((x, i) => (
-      <rect key={x} x={x} y="0" width={i % 3 === 0 ? 1.6 : 0.9} height="16" fill={dt.navy} />
-    ))}
-  </svg>
-)
-const ManualMini = () => (
-  <svg width="20" height="16" viewBox="0 0 20 16" fill="none">
-    <rect x="0" y="3" width="20" height="10" rx="2" stroke={dt.navy} strokeWidth="1.4" />
-    <path d="M4 8h12" stroke={dt.navy} strokeWidth="1.4" strokeLinecap="round" />
-  </svg>
-)
 const ClockIco = ({ c = dt.navy }: { c?: string }) => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
     <circle cx="12" cy="12" r="9" stroke={c} strokeWidth="1.8" />
     <path d="M12 7v5l3.5 2" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+const CodigoIco = () => (
+  <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+    <path d="M14 28a14 14 0 0114-14 14 14 0 0111.3 5.8" stroke={dt.navy} strokeWidth="2.4" strokeLinecap="round" />
+    <path d="M42 28a14 14 0 01-14 14 14 14 0 01-11.3-5.8" stroke={dt.coral} strokeWidth="2.4" strokeLinecap="round" />
+    <circle cx="28" cy="28" r="10" fill={dt.navyLt} stroke={dt.navyMd} strokeWidth="1.2" />
+    <text x="28" y="33" textAnchor="middle" fontSize="13" fontWeight="800" fill={dt.navy} fontFamily="Montserrat, sans-serif">$</text>
+  </svg>
+)
+const ChevDown = ({ c = dt.navy, s = 24 }: { c?: string; s?: number }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24" fill="none">
+    <path d="M6 9l6 6 6-6" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+const MoneyIco = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+    <rect x="2" y="6" width="20" height="13" rx="2.5" stroke={dt.navy} strokeWidth="1.5" />
+    <circle cx="12" cy="12.5" r="3" stroke={dt.navy} strokeWidth="1.5" />
+  </svg>
+)
+const ChargeIco = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+    <circle cx="11" cy="12" r="8" stroke={dt.navy} strokeWidth="1.5" />
+    <path d="M8.5 14.2c.4.9 1.3 1.5 2.5 1.5 1.5 0 2.6-.8 2.6-2s-1-1.7-2.6-2c-1.5-.3-2.5-.8-2.5-2s1.1-2 2.6-2c1.1 0 2 .6 2.4 1.4M11 7.3v9.4" stroke={dt.navy} strokeWidth="1.3" strokeLinecap="round" />
+    <path d="M18 5l1.6 1.6M18 19l1.6-1.6" stroke={dt.navy} strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+)
+const BankIco = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+    <path d="M3 9.5L12 4l9 5.5" stroke={dt.navy} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M4.5 10v8.5M9 10v8.5M15 10v8.5M19.5 10v8.5" stroke={dt.navy} strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M3 19.5h18" stroke={dt.navy} strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+)
+const StoreIco = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+    <path d="M4 4h16l1.5 5a2.3 2.3 0 01-4.3 1.4A2.3 2.3 0 0113 10a2.3 2.3 0 01-4.2.4A2.3 2.3 0 014.5 9L4 4z" stroke={dt.navy} strokeWidth="1.5" strokeLinejoin="round" />
+    <path d="M5 10.5V20h14v-9.5" stroke={dt.navy} strokeWidth="1.5" strokeLinejoin="round" />
+    <path d="M9.5 20v-5a1.5 1.5 0 013 0v5" stroke={dt.navy} strokeWidth="1.5" strokeLinejoin="round" />
   </svg>
 )
 
@@ -203,6 +230,14 @@ function SecondaryBtn({ children, onClick }: { children: React.ReactNode; onClic
   )
 }
 
+function NuevoTag() {
+  return (
+    <div style={{ background: dt.coral, borderRadius: 100, padding: '2px 12px' }}>
+      <span style={{ fontFamily: F, fontWeight: 500, fontSize: 12, color: dt.white }}>Nuevo</span>
+    </div>
+  )
+}
+
 function InfoRow({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', minHeight: 16, gap: 12 }}>
@@ -259,7 +294,7 @@ function Modal({ children, onClose }: { children: React.ReactNode; onClose?: () 
 }
 
 // ── SCREEN 1 — DASHBOARD ──────────────────────────────────────────────────────
-function DashboardScreen({ onNavigate, onToast }: { onNavigate: (s: Screen) => void; onToast: (m: string) => void }) {
+function DashboardScreen({ onToast, onOpenMetodo }: { onToast: (m: string) => void; onOpenMetodo: () => void }) {
   const [balVis, setBalVis] = useState(true)
   const [showMenu, setShowMenu] = useState(false)
   const iconBg = `linear-gradient(135deg, rgba(238,66,78,.08), rgba(18,30,108,.08)), ${dt.white}`
@@ -323,7 +358,7 @@ function DashboardScreen({ onNavigate, onToast }: { onNavigate: (s: Screen) => v
               <QuickBtn ico={<TransferIco />} label="Transferir" onClick={() => onToast('Próximamente 🚀')} />
               <QuickBtn ico={<span style={{ fontFamily: F, fontWeight: 800, fontSize: 12, color: dt.coral }}>Bre-B</span>} label="Bre-B" onClick={() => onToast('Próximamente 🚀')} />
               <QuickBtn ico={<BagIco />} label="Pagar facturas" onClick={() => onToast('Próximamente 🚀')} />
-              <QuickBtn ico={<DepositIco />} label="Depositar" onClick={() => onNavigate('metodo')} />
+              <QuickBtn ico={<DepositIco />} label="Depositar" onClick={onOpenMetodo} />
             </div>
             <div style={{ background: dt.navyLt, borderRadius: 12, padding: '10px 16px', textAlign: 'center', cursor: 'pointer' }}>
               <span style={{ fontFamily: F, fontWeight: 700, fontSize: 13, color: dt.navy }}>Ver movimientos</span>
@@ -373,7 +408,7 @@ function DashboardScreen({ onNavigate, onToast }: { onNavigate: (s: Screen) => v
               { ico: <TransferIco />, label: 'Transferir', fn: () => { setShowMenu(false); onToast('Próximamente 🚀') } },
               { ico: <span style={{ fontFamily: F, fontWeight: 800, fontSize: 13, color: dt.coral }}>Bre-B</span>, label: 'Bre-B', fn: () => { setShowMenu(false); onToast('Próximamente 🚀') } },
               { ico: <BagIco />, label: 'Pagar facturas', fn: () => { setShowMenu(false); onToast('Próximamente 🚀') } },
-              { ico: <DepositIco />, label: 'Depositar', fn: () => { setShowMenu(false); onNavigate('metodo') } },
+              { ico: <DepositIco />, label: 'Depositar', fn: () => { setShowMenu(false); onOpenMetodo() } },
             ].map(item => (
               <div key={item.label} onClick={item.fn} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
                 <div style={{ width: 56, height: 56, borderRadius: 16, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.ico}</div>
@@ -387,29 +422,47 @@ function DashboardScreen({ onNavigate, onToast }: { onNavigate: (s: Screen) => v
   )
 }
 
-// ── SCREEN 2 — MÉTODO DE DEPÓSITO ────────────────────────────────────────────
-function MetodoScreen({ onNavigate, onToast }: { onNavigate: (s: Screen) => void; onToast: (m: string) => void }) {
-  const MethodCard = ({ label, sub, enabled, onClick }: { label: string; sub: string; enabled: boolean; onClick: () => void }) => (
-    <button onClick={enabled ? onClick : () => onToast('Próximamente disponible')} style={{ flex: 1, background: dt.white, border: `1.5px solid ${enabled ? dt.navyBdr : 'transparent'}`, borderRadius: 16, padding: '20px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, cursor: 'pointer', boxShadow: dt.shadow, opacity: enabled ? 1 : 0.5 }}>
-      <div style={{ width: 44, height: 44, borderRadius: 12, background: dt.navyLt, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="20" height="13" rx="2.5" stroke={dt.navy} strokeWidth="1.5" /><circle cx="12" cy="12.5" r="3" stroke={dt.navy} strokeWidth="1.5" /></svg>
+// ── BOTTOM SHEET — ¿CÓMO QUIERES DEPOSITAR? (fiel a Figma: node 47765:146792) ─
+function MetodoBottomSheet({ onClose, onToast, onSelectCorresponsales }: { onClose: () => void; onToast: (m: string) => void; onSelectCorresponsales: () => void }) {
+  const GridCard = ({ ico, title, sub, tag, enabled, onClick }: { ico: React.ReactNode; title: string; sub: string; tag?: boolean; enabled: boolean; onClick: () => void }) => (
+    <button
+      onClick={enabled ? onClick : () => onToast('Próximamente disponible')}
+      style={{ flex: '1 0 0', minWidth: 155, background: dt.bg, border: 'none', borderRadius: 16, padding: '12px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, cursor: 'pointer', opacity: enabled ? 1 : 0.6 }}
+    >
+      {ico}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+          <span style={{ fontFamily: F, fontWeight: 500, fontSize: 12, color: dt.t1, textAlign: 'center', lineHeight: '16px' }}>{title}</span>
+          <span style={{ fontFamily: F, fontWeight: 400, fontSize: 12, color: dt.t1, textAlign: 'center', lineHeight: '16px' }}>{sub}</span>
+        </div>
+        {tag && <NuevoTag />}
       </div>
-      <span style={{ fontFamily: F, fontWeight: 700, fontSize: 14, color: dt.navy }}>{label}</span>
-      <span style={{ fontFamily: F, fontWeight: 400, fontSize: 11, color: dt.t2, textAlign: 'center' }}>{sub}</span>
     </button>
   )
 
   return (
-    <div style={{ background: dt.bg, height: '100%', fontFamily: F, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      <StatusBar />
-      <AppHeader title="¿Cómo quieres depositar?" onBack={() => onNavigate('dashboard')} onClose={() => onNavigate('dashboard')} />
-      <div className="scroll-inner" style={{ flex: 1, overflowY: 'auto', padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <p style={{ fontFamily: F, fontWeight: 400, fontSize: 13, color: dt.t1, margin: 0 }}>Elige el método que prefieras para depositar dinero en tu Cuenta Bold.</p>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <MethodCard label="Efectivo" sub="Puntos corresponsales" enabled onClick={() => onNavigate('permiso')} />
-          <MethodCard label="PSE" sub="Otros bancos" enabled={false} onClick={() => {}} />
+    <div style={{ position: 'absolute', inset: 0, background: 'rgba(30,30,30,.7)', display: 'flex', alignItems: 'flex-end', zIndex: 50 }} onClick={onClose}>
+      <div style={{ background: dt.white, borderRadius: '32px 32px 0 0', padding: '12px 16px 32px', width: '100%', display: 'flex', flexDirection: 'column', gap: 16, boxShadow: '0px 4px 4px rgba(0,0,0,0.04)' }} onClick={e => e.stopPropagation()}>
+        <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+          <button onClick={onClose} style={{ width: 24, height: 48, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <ChevDown />
+          </button>
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'center', paddingTop: 12 }}>
+            <span style={{ fontFamily: F, fontWeight: 700, fontSize: 16, color: dt.navy, textAlign: 'center' }}>¿Cómo quieres depositar?</span>
+          </div>
+          <div style={{ width: 24, flexShrink: 0 }} />
         </div>
-        <MethodCard label="Otros bancos" sub="Transferencia desde otra entidad" enabled={false} onClick={() => {}} />
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center' }}>
+          <GridCard ico={<MoneyIco />} title="Efectivo" sub="Puntos Efecty" enabled={false} onClick={() => {}} />
+          <GridCard ico={<ChargeIco />} title="PSE" sub="Otros bancos" enabled={false} onClick={() => {}} />
+          <GridCard ico={<BankIco />} title="Efectivo o cheque" sub="Banco de Bogota" tag enabled={false} onClick={() => {}} />
+          <GridCard ico={<StoreIco />} title="Corresponsales" sub="Puntos físicos" tag enabled onClick={onSelectCorresponsales} />
+        </div>
+
+        <button onClick={() => onToast('Función no disponible en este prototipo')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+          <span style={{ fontFamily: F, fontWeight: 700, fontSize: 12, color: dt.navy, textDecoration: 'underline' }}>¿Dónde puedo hacer recargas en efectivo?</span>
+        </button>
       </div>
     </div>
   )
@@ -422,7 +475,7 @@ function PermisoScreen({ onNavigate, onToast }: { onNavigate: (s: Screen) => voi
   return (
     <div style={{ background: dt.bg, height: '100%', fontFamily: F, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <StatusBar />
-      <AppHeader title="Puntos para depositar" onBack={() => onNavigate('metodo')} />
+      <AppHeader title="Puntos para depositar" onBack={() => onNavigate('dashboard')} />
       <div className="scroll-inner" style={{ flex: 1, overflowY: 'auto', padding: '40px 24px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 20 }}>
         {variant === 'ask' ? (
           <>
@@ -499,7 +552,6 @@ function PuntosScreen({ onNavigate, onToast, onSelectPunto }: { onNavigate: (s: 
               <span style={{ fontFamily: F, fontSize: 11, color: dt.t2 }}>{p.horario} · {p.distancia_km.toFixed(1)} km</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
                 <span style={{ background: dt.tagBg, borderRadius: 100, padding: '3px 10px', fontFamily: F, fontSize: 11, fontWeight: 600, color: dt.navy }}>Hasta {fmt(p.limite_maximo)}</span>
-                {p.metodo === 'manual' ? <ManualMini /> : <BarcodeMini />}
               </div>
             </div>
           )
@@ -537,13 +589,13 @@ function MontoScreen({ onNavigate, punto, monto, setMonto }: { onNavigate: (s: S
       <div className="scroll-inner" style={{ flex: 1, overflowY: 'auto', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 20 }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '20px 0 4px' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-            <span style={{ fontFamily: 'ui-monospace, Consolas, monospace', fontWeight: 700, fontSize: 32, color: dt.navy }}>$</span>
+            <span style={{ fontFamily: F, fontWeight: 300, fontSize: 40, lineHeight: '60px', color: dt.navy }}>$</span>
             <input
               value={raw === '' ? '' : parseInt(raw, 10).toLocaleString('es-CO')}
               onChange={e => handleChange(e.target.value)}
               inputMode="numeric"
               placeholder="0"
-              style={{ border: 'none', outline: 'none', background: 'transparent', fontFamily: 'ui-monospace, Consolas, monospace', fontWeight: 700, fontSize: 42, color: dt.navy, width: 220, textAlign: 'center' }}
+              style={{ border: 'none', outline: 'none', background: 'transparent', fontFamily: F, fontWeight: 300, fontSize: 40, lineHeight: '60px', color: dt.navy, width: 220, textAlign: 'center' }}
             />
           </div>
           <span style={{ fontFamily: F, fontSize: 12, color: dt.t2, textAlign: 'center' }}>Puedes depositar hasta {fmt(punto.limite_maximo)} en este punto.</span>
@@ -578,8 +630,6 @@ function CodigoScreen({ onNavigate, punto, monto }: { onNavigate: (s: Screen) =>
   const [secondsLeft, setSecondsLeft] = useState(1800)
   const [expired, setExpired] = useState(false)
   const [codigoDeposito, setCodigoDeposito] = useState(() => randomDigits(6))
-  const [tab, setTab] = useState<'barras' | 'numero'>('barras')
-  const [showAyuda, setShowAyuda] = useState(false)
   const [showComo, setShowComo] = useState(false)
   const [showCancel, setShowCancel] = useState(false)
 
@@ -606,37 +656,17 @@ function CodigoScreen({ onNavigate, punto, monto }: { onNavigate: (s: Screen) =>
       <StatusBar />
       <AppHeader title="Depósito en efectivo" onClose={() => setShowCancel(true)} />
       <div className="scroll-inner" style={{ flex: 1, overflowY: 'auto', padding: '4px 16px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div>
-          <h2 style={{ fontFamily: F, fontWeight: 700, fontSize: 18, color: dt.t1, margin: '0 0 2px' }}>Dirígete al punto más cercano</h2>
-          <p style={{ fontFamily: F, fontSize: 12, color: dt.t2, margin: 0 }}>Muéstrale al cajero la información para tu depósito.</p>
-        </div>
-
         <div style={{ background: dt.white, borderRadius: 16, padding: '20px 16px', boxShadow: dt.shadow, borderTop: `4px solid ${dt.navy}`, opacity: expired ? 0.45 : 1, position: 'relative' }}>
-          {tieneBarras && (
-            <div style={{ display: 'flex', background: dt.navyLt, borderRadius: 100, padding: 3, marginBottom: 16 }}>
-              <button onClick={() => setTab('barras')} style={{ flex: 1, padding: '6px 8px', borderRadius: 100, border: 'none', cursor: 'pointer', background: tab === 'barras' ? dt.navy : 'transparent' }}>
-                <span style={{ fontFamily: F, fontWeight: 600, fontSize: 12, color: tab === 'barras' ? dt.white : dt.t1 }}>Código de barras</span>
-              </button>
-              <button onClick={() => setTab('numero')} style={{ flex: 1, padding: '6px 8px', borderRadius: 100, border: 'none', cursor: 'pointer', background: tab === 'numero' ? dt.navy : 'transparent' }}>
-                <span style={{ fontFamily: F, fontWeight: 600, fontSize: 12, color: tab === 'numero' ? dt.white : dt.t1 }}>Número</span>
-              </button>
-            </div>
-          )}
-
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-            {(!tieneBarras || tab === 'barras') && (
-              <>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+            <CodigoIco />
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
+              <span style={{ fontFamily: F, fontWeight: 700, fontSize: 16, color: dt.navy }}>Código de depósito</span>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, margin: '12px 0 8px' }}>
                 {tieneBarras && <Barcode big />}
-                <span style={{ fontFamily: 'ui-monospace, Consolas, monospace', fontWeight: 700, fontSize: tieneBarras ? 20 : 34, color: dt.navy, letterSpacing: 2 }}>{codigoDeposito}</span>
-              </>
-            )}
-            {tieneBarras && tab === 'numero' && (
-              <>
-                <span style={{ fontFamily: 'ui-monospace, Consolas, monospace', fontWeight: 700, fontSize: 34, color: dt.navy, letterSpacing: 2 }}>{codigoDeposito}</span>
-                <Barcode big={false} />
-              </>
-            )}
-            <span style={{ fontFamily: F, fontSize: 11, color: dt.t2 }}>Tu código de depósito</span>
+                <span style={{ fontFamily: F, fontWeight: 400, fontSize: 32, color: dt.navy }}>{codigoDeposito}</span>
+              </div>
+              <span style={{ fontFamily: F, fontSize: 12, color: dt.navy60, textAlign: 'center' }}>Presenta el código de barras o tu código numérico</span>
+            </div>
           </div>
 
           <div style={{ height: 1, background: dt.navyBdr, margin: '16px 0' }} />
@@ -661,17 +691,6 @@ function CodigoScreen({ onNavigate, punto, monto }: { onNavigate: (s: Screen) =>
           )}
         </div>
 
-        <button onClick={() => setShowAyuda(v => !v)} style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0 }}>
-          <span style={{ fontFamily: F, fontWeight: 600, fontSize: 13, color: dt.navy, textDecoration: 'underline' }}>Ayuda para el cajero</span>
-        </button>
-        {showAyuda && (
-          <div style={{ background: dt.navyLt, borderRadius: 12, padding: '12px 14px' }}>
-            <span style={{ fontFamily: F, fontSize: 12, color: dt.t1, lineHeight: '18px' }}>
-              Dile al cajero que quieres hacer un pago por convenio con el número <strong>{codigoInterno}</strong>.
-            </span>
-          </div>
-        )}
-
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <ActionRow icon={<HelpIco />} label="¿Cómo depositar?" onClick={() => setShowComo(true)} />
           <ActionRow icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2C7 2 3 6 3 11c0 6.5 9 11 9 11s9-4.5 9-11c0-5-4-9-9-9z" stroke={dt.navy} strokeWidth="1.6" /><circle cx="12" cy="11" r="3" stroke={dt.navy} strokeWidth="1.6" /></svg>} label="¿Dónde puedo depositar?" onClick={() => onNavigate('puntos')} />
@@ -682,7 +701,7 @@ function CodigoScreen({ onNavigate, punto, monto }: { onNavigate: (s: Screen) =>
       <StickyBottom>
         {expired
           ? <PrimaryBtn onClick={handleNuevoCodigo}>Generar nuevo código</PrimaryBtn>
-          : <PrimaryBtn onClick={() => onNavigate('espera')}>Finalizar</PrimaryBtn>}
+          : <PrimaryBtn onClick={() => onNavigate('comprobante')}>Finalizar</PrimaryBtn>}
       </StickyBottom>
 
       {showComo && (
@@ -718,119 +737,90 @@ function CodigoScreen({ onNavigate, punto, monto }: { onNavigate: (s: Screen) =>
   )
 }
 
-// ── SCREEN 7 — ESPERA ─────────────────────────────────────────────────────────
-const esperaMensajes = [
-  'Estableciendo comunicación con el comercio...',
-  'Asegurando tu depósito en la red bancaria...',
-  'Finalizando validación de fondos...',
-]
-
-function EsperaScreen({ onNavigate }: { onNavigate: (s: Screen) => void }) {
-  const [step, setStep] = useState(0)
-
-  useEffect(() => {
-    if (step >= esperaMensajes.length - 1) {
-      const t = setTimeout(() => onNavigate('exito'), 2000)
-      return () => clearTimeout(t)
-    }
-    const t = setTimeout(() => setStep(s => s + 1), 2000)
-    return () => clearTimeout(t)
-  }, [step])
-
-  return (
-    <div style={{ background: dt.bg, height: '100%', fontFamily: F, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 28, padding: '0 32px' }}>
-      <div className="animate-soft-pulse">
-        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-          <circle cx="32" cy="32" r="28" stroke={dt.navyBdr} strokeWidth="4" />
-          <path d="M32 4a28 28 0 0128 28" stroke={dt.coral} strokeWidth="4" strokeLinecap="round" />
-        </svg>
-      </div>
-      <span key={step} className="animate-fade-in" style={{ fontFamily: F, fontWeight: 600, fontSize: 15, color: dt.t1, textAlign: 'center', lineHeight: '22px' }}>
-        {esperaMensajes[step]}
-      </span>
-    </div>
-  )
-}
-
-// ── SCREEN 8 — ÉXITO ──────────────────────────────────────────────────────────
-function ExitoScreen({ onNavigate, monto }: { onNavigate: (s: Screen) => void; monto: number }) {
-  useEffect(() => {
-    const t = setTimeout(() => onNavigate('comprobante'), 1800)
-    return () => clearTimeout(t)
-  }, [])
-
-  return (
-    <div style={{ background: dt.green, height: '100%', fontFamily: F, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
-      <div className="animate-success"><CheckCircle s={88} /></div>
-      <span style={{ fontFamily: F, fontWeight: 700, fontSize: 22, color: dt.t1 }}>¡Depósito exitoso!</span>
-      <span style={{ fontFamily: F, fontWeight: 700, fontSize: 30, color: dt.navy }}>{fmt(monto)}</span>
-    </div>
-  )
-}
-
-// ── SCREEN 9 — COMPROBANTE ────────────────────────────────────────────────────
+// ── SCREEN 7 — COMPROBANTE (fiel a Figma: node 51709:92933) ──────────────────
 function ComprobanteScreen({ onNavigate, onToast, punto, monto }: { onNavigate: (s: Screen) => void; onToast: (m: string) => void; punto: PuntoResuelto; monto: number }) {
   const [txId] = useState(() => `DEP-${new Date().getFullYear()}-${randomDigits(6)}`)
   const [fechaHora] = useState(() => new Date().toLocaleString('es-CO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }))
-  const metodoLabel = punto.metodo === 'manual' ? 'Código manual' : 'Código de barras'
 
   return (
     <div style={{ background: dt.bg, height: '100%', fontFamily: F, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      <div style={{ height: 190, flexShrink: 0, position: 'relative', overflow: 'hidden', background: dt.navy }}>
+      <div style={{ height: 210, flexShrink: 0, position: 'relative', overflow: 'hidden', background: dt.navy }}>
         <div style={{ position: 'absolute', top: -60, right: -60, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,41,71,.65) 0%, transparent 70%)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: -60, left: -60, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,41,71,.5) 0%, transparent 70%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'relative', zIndex: 2 }}><StatusBar light /></div>
-        <div style={{ position: 'absolute', top: 56, left: '50%', transform: 'translateX(-50%)', zIndex: 2 }}>
-          <img src="/assets/bold-logo-white.svg" width={92} height={34} alt="Bold" style={{ objectFit: 'contain' }} />
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <StatusBar light />
+          <div style={{ display: 'flex', alignItems: 'center', padding: '6px 12px', minHeight: 44 }}>
+            <button onClick={() => onNavigate('dashboard')} style={{ width: 24, height: 24, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <ChevL c={dt.white} />
+            </button>
+            <div style={{ flex: 1 }} />
+            <button onClick={() => onNavigate('dashboard')} style={{ width: 24, height: 24, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <XIcon c={dt.white} />
+            </button>
+          </div>
+        </div>
+        <div style={{ position: 'absolute', top: 84, left: '50%', transform: 'translateX(-50%)', zIndex: 2 }}>
+          <img src={`${import.meta.env.BASE_URL}assets/bold-logo-white.svg`} width={92} height={34} alt="Bold" style={{ objectFit: 'contain' }} />
         </div>
       </div>
 
-      <div className="scroll-inner" style={{ flex: 1, overflowY: 'auto' }}>
-        <div style={{ margin: '-40px 16px 0', position: 'relative', zIndex: 5 }}>
-          <div style={{ background: dt.navy, height: 6, borderRadius: '6px 6px 0 0', margin: '0 20px' }} />
-          <div style={{ background: dt.white, borderRadius: '0 0 16px 16px', padding: '22px 16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="scroll-inner" style={{ flex: 1, overflowY: 'auto', margin: '-40px 16px 0', paddingBottom: 28, position: 'relative', zIndex: 5, display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div>
+          <div style={{ background: dt.navy, height: 6, borderRadius: '6px 6px 0 0', margin: '0 -8px' }} />
+          <div style={{ background: dt.white, borderRadius: '0 0 16px 16px', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: 20 }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-              <div className="animate-success"><CheckCircle s={48} /></div>
-              <div style={{ fontFamily: F, fontWeight: 700, fontSize: 16, color: dt.t1 }}>Depósito exitoso</div>
-              <div style={{ fontFamily: F, fontWeight: 700, fontSize: 28, color: dt.navy }}>{fmt(monto)}</div>
+              <div className="animate-success"><CheckCircle s={40} /></div>
+              <span style={{ fontFamily: F, fontWeight: 700, fontSize: 16, color: dt.navy }}>Depósito exitoso</span>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                <span style={{ fontFamily: F, fontWeight: 600, fontSize: 32, color: dt.navy }}>{fmt(monto)}</span>
+                <span style={{ fontFamily: F, fontWeight: 400, fontSize: 12, color: dt.navy }}>{fechaHora}</span>
+              </div>
             </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <InfoRow label="Costo de la transacción" value="$0" />
+              <InfoRow label="Se acreditó en tu Cuenta Bold" value={fmt(monto)} bold />
+            </div>
+
             <div style={{ height: 1, background: dt.navyBdr }} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <InfoRow label="Fecha y hora" value={fechaHora} />
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <InfoRow label="Descripción" value="Depósito en efectivo" />
+              <InfoRow label="Estado" value="Aprobado" />
               <InfoRow label="ID de transacción" value={txId} />
+              <InfoRow label="Punto de depósito" value={punto.nombre_comercial} />
               <InfoRow label="Entidad" value="Bold CF" />
               <InfoRow label="Número de cuenta" value={`******${mockCuenta.ultimos4}`} />
-              <InfoRow label="Punto de depósito" value={punto.nombre_comercial} />
-              <InfoRow label="Método usado" value={metodoLabel} />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontFamily: F, fontSize: 12, fontWeight: 400, color: dt.t1 }}>Método de recarga</span>
+                <span style={{ fontFamily: F, fontWeight: 500, fontSize: 12, color: dt.t1 }}>Corresponsales</span>
+              </div>
             </div>
           </div>
+        </div>
 
-          <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
-            <button onClick={() => onToast('Comprobante guardado ✓')} style={{ flex: 1, background: dt.white, borderRadius: 100, padding: '12px', border: `1.5px solid ${dt.navyBdr}`, cursor: 'pointer' }}>
-              <span style={{ fontFamily: F, fontWeight: 700, fontSize: 13, color: dt.navy }}>Descargar PDF</span>
-            </button>
-            <button onClick={() => onToast('Función no disponible en este prototipo')} style={{ flex: 1, background: dt.white, borderRadius: 100, padding: '12px', border: `1.5px solid ${dt.navyBdr}`, cursor: 'pointer' }}>
-              <span style={{ fontFamily: F, fontWeight: 700, fontSize: 13, color: dt.navy }}>Compartir</span>
-            </button>
-          </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <button onClick={() => onToast('Función no disponible en este prototipo')} style={{ width: '100%', height: 48, borderRadius: 100, background: dt.coral, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontFamily: F, fontWeight: 700, fontSize: 14, color: dt.white, textTransform: 'uppercase' }}>Compartir</span>
+          </button>
+          <button onClick={() => onNavigate('dashboard')} style={{ width: '100%', height: 48, borderRadius: 100, background: dt.white, border: `1.5px solid ${dt.coral}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontFamily: F, fontWeight: 700, fontSize: 14, color: dt.coral, textTransform: 'uppercase' }}>Finalizar</span>
+          </button>
         </div>
       </div>
-
-      <StickyBottom>
-        <PrimaryBtn onClick={() => onNavigate('dashboard')}>Finalizar</PrimaryBtn>
-      </StickyBottom>
     </div>
   )
 }
 
 // ── ROOT ──────────────────────────────────────────────────────────────────────
-type Screen = 'dashboard' | 'metodo' | 'permiso' | 'puntos' | 'monto' | 'codigo' | 'espera' | 'exito' | 'comprobante'
+type Screen = 'dashboard' | 'permiso' | 'puntos' | 'monto' | 'codigo' | 'comprobante'
 
 export default function DepositoCorresponsales() {
   const [screen, setScreen] = useState<Screen>('dashboard')
   const [punto, setPunto] = useState<PuntoResuelto | null>(null)
   const [monto, setMonto] = useState(0)
   const [toast, setToast] = useState<string | null>(null)
+  const [showMetodo, setShowMetodo] = useState(false)
 
   const nav = (s: Screen) => {
     if (s === 'dashboard') { setPunto(null); setMonto(0) }
@@ -844,16 +834,13 @@ export default function DepositoCorresponsales() {
 
   const screen$ = (() => {
     switch (screen) {
-      case 'dashboard':    return <DashboardScreen onNavigate={nav} onToast={showToast} />
-      case 'metodo':       return <MetodoScreen onNavigate={nav} onToast={showToast} />
+      case 'dashboard':    return <DashboardScreen onToast={showToast} onOpenMetodo={() => setShowMetodo(true)} />
       case 'permiso':      return <PermisoScreen onNavigate={nav} onToast={showToast} />
       case 'puntos':       return <PuntosScreen onNavigate={nav} onToast={showToast} onSelectPunto={setPunto} />
       case 'monto':        return punto && <MontoScreen onNavigate={nav} punto={punto} monto={monto} setMonto={setMonto} />
       case 'codigo':       return punto && <CodigoScreen onNavigate={nav} punto={punto} monto={monto} />
-      case 'espera':       return <EsperaScreen onNavigate={nav} />
-      case 'exito':        return <ExitoScreen onNavigate={nav} monto={monto} />
       case 'comprobante':  return punto && <ComprobanteScreen onNavigate={nav} onToast={showToast} punto={punto} monto={monto} />
-      default:             return <DashboardScreen onNavigate={nav} onToast={showToast} />
+      default:             return <DashboardScreen onToast={showToast} onOpenMetodo={() => setShowMetodo(true)} />
     }
   })()
 
@@ -862,6 +849,13 @@ export default function DepositoCorresponsales() {
       <div key={screen} className="screen screen-enter">
         {screen$}
       </div>
+      {showMetodo && (
+        <MetodoBottomSheet
+          onClose={() => setShowMetodo(false)}
+          onToast={showToast}
+          onSelectCorresponsales={() => { setShowMetodo(false); nav('permiso') }}
+        />
+      )}
       {toast && <Toast msg={toast} />}
     </div>
   )
