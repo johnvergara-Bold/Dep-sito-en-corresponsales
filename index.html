@@ -10,6 +10,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <script src="tracker.js"></script>
+<script>
+  UXTracker.init({
+    supabaseUrl: "https://gvsysqmafmroatufngbt.supabase.co",
+    supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2c3lzcW1hZm1yb2F0dWZuZ2J0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MzgxMjUsImV4cCI6MjEwMjMxNDEyNX0.9Oj-p4mLh_GJaEoVCtrmQEwdLT0v4V0j6iUzbgrun_M",
+    prototypeId: "a3fee2bf-7453-4fb0-81f0-2427f3400356",
+    participant: new URLSearchParams(location.search).get("p"),
+    moderated: new URLSearchParams(location.search).get("mod") === "1"
+  });
+</script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
