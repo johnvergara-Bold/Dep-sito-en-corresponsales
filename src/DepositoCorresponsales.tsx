@@ -4,6 +4,16 @@ import { useState, useEffect, useMemo } from 'react'
 import type { PuntoResuelto } from './mockData'
 import { resolverPuntos, codigoInternoDe, fmt, mockUser, mockCuenta } from './mockData'
 
+// ── UX TRACKER (SDK cargado en index.html) ────────────────────────────────────
+// El SDK no expone un método público para marcar pantallas: registra un
+// screen_view automáticamente cada vez que la URL cambia (intercepta
+// history.pushState) y usa document.title como nombre de pantalla. Por eso
+// actualizamos ambos en cada transición para que quede una fila por pantalla.
+function trackScreen(name: string) {
+  document.title = name
+  history.pushState(null, '', `#${name}`)
+}
+
 // ── DESIGN TOKENS ──────────────────────────────────────────────────────────────
 const dt = {
   bg:     '#F7F8FB',
@@ -788,6 +798,15 @@ function ComprobanteScreen({ onNavigate, onToast, punto, monto }: { onNavigate: 
 // ── ROOT ──────────────────────────────────────────────────────────────────────
 type Screen = 'dashboard' | 'permiso' | 'puntos' | 'monto' | 'codigo' | 'comprobante'
 
+const SCREEN_TRACKING_NAMES: Record<Screen, string> = {
+  dashboard: 'dashboard',
+  permiso: 'permiso-ubicacion',
+  puntos: 'puntos-cercanos',
+  monto: 'monto-deposito',
+  codigo: 'codigo-deposito',
+  comprobante: 'comprobante',
+}
+
 export default function DepositoCorresponsales() {
   const [screen, setScreen] = useState<Screen>('dashboard')
   const [punto, setPunto] = useState<PuntoResuelto | null>(null)
@@ -795,9 +814,22 @@ export default function DepositoCorresponsales() {
   const [toast, setToast] = useState<string | null>(null)
   const [showMetodo, setShowMetodo] = useState(false)
 
+  useEffect(() => { trackScreen(SCREEN_TRACKING_NAMES.dashboard) }, [])
+
   const nav = (s: Screen) => {
     if (s === 'dashboard') { setPunto(null); setMonto(0) }
     setScreen(s)
+    trackScreen(SCREEN_TRACKING_NAMES[s])
+  }
+
+  const openMetodo = () => {
+    setShowMetodo(true)
+    trackScreen('metodo-deposito')
+  }
+
+  const closeMetodo = () => {
+    setShowMetodo(false)
+    trackScreen(SCREEN_TRACKING_NAMES.dashboard)
   }
 
   const showToast = (msg: string) => {
@@ -807,13 +839,13 @@ export default function DepositoCorresponsales() {
 
   const screen$ = (() => {
     switch (screen) {
-      case 'dashboard':    return <DashboardScreen onToast={showToast} onOpenMetodo={() => setShowMetodo(true)} />
+      case 'dashboard':    return <DashboardScreen onToast={showToast} onOpenMetodo={openMetodo} />
       case 'permiso':      return <PermisoScreen onNavigate={nav} onToast={showToast} />
       case 'puntos':       return <PuntosScreen onNavigate={nav} onToast={showToast} onSelectPunto={setPunto} />
       case 'monto':        return punto && <MontoScreen onNavigate={nav} punto={punto} monto={monto} setMonto={setMonto} />
       case 'codigo':       return punto && <CodigoScreen onNavigate={nav} punto={punto} monto={monto} />
       case 'comprobante':  return punto && <ComprobanteScreen onNavigate={nav} onToast={showToast} punto={punto} monto={monto} />
-      default:             return <DashboardScreen onToast={showToast} onOpenMetodo={() => setShowMetodo(true)} />
+      default:             return <DashboardScreen onToast={showToast} onOpenMetodo={openMetodo} />
     }
   })()
 
@@ -824,7 +856,7 @@ export default function DepositoCorresponsales() {
       </div>
       {showMetodo && (
         <MetodoBottomSheet
-          onClose={() => setShowMetodo(false)}
+          onClose={closeMetodo}
           onToast={showToast}
           onSelectCorresponsales={() => { setShowMetodo(false); nav('permiso') }}
         />
