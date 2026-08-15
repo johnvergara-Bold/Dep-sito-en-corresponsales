@@ -5,13 +5,20 @@ import type { PuntoResuelto } from './mockData'
 import { resolverPuntos, codigoInternoDe, fmt, mockUser, mockCuenta } from './mockData'
 
 // ── UX TRACKER (SDK cargado en index.html) ────────────────────────────────────
-// El SDK no expone un método público para marcar pantallas: registra un
-// screen_view automáticamente cada vez que la URL cambia (intercepta
-// history.pushState) y usa document.title como nombre de pantalla. Por eso
-// actualizamos ambos en cada transición para que quede una fila por pantalla.
+declare global {
+  interface Window {
+    UXTracker?: { setScreen?: (screenName: string) => void }
+  }
+}
+
 function trackScreen(name: string) {
-  document.title = name
-  history.pushState(null, '', `#${name}`)
+  // Defensivo: si el SDK no cargó o esta versión cacheada aún no tiene
+  // setScreen, no debe tumbar el prototipo — solo se pierde el tracking.
+  try {
+    window.UXTracker?.setScreen?.(name)
+  } catch (e) {
+    console.warn('[UXTracker] setScreen falló:', e)
+  }
 }
 
 // ── DESIGN TOKENS ──────────────────────────────────────────────────────────────
@@ -455,6 +462,9 @@ function MetodoBottomSheet({ onClose, onToast, onSelectCorresponsales }: { onClo
 function PermisoScreen({ onNavigate, onToast }: { onNavigate: (s: Screen) => void; onToast: (m: string) => void }) {
   const [variant, setVariant] = useState<'ask' | 'denied'>('ask')
 
+  const showDenied = () => { setVariant('denied'); trackScreen('permiso-sin-acceso') }
+  const showAsk = () => { setVariant('ask'); trackScreen('permiso-ubicacion') }
+
   return (
     <div style={{ background: dt.bg, height: '100%', fontFamily: F, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <StatusBar />
@@ -483,12 +493,12 @@ function PermisoScreen({ onNavigate, onToast }: { onNavigate: (s: Screen) => voi
         {variant === 'ask' ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <PrimaryBtn onClick={() => onNavigate('puntos')}>Permitir acceso a mi ubicación</PrimaryBtn>
-            <button onClick={() => setVariant('denied')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+            <button onClick={showDenied} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
               <span style={{ fontFamily: F, fontWeight: 500, fontSize: 12, color: dt.t2, textDecoration: 'underline' }}>Ver caso: sin acceso a ubicación</span>
             </button>
           </div>
         ) : (
-          <PrimaryBtn onClick={() => setVariant('ask')}>Volver</PrimaryBtn>
+          <PrimaryBtn onClick={showAsk}>Volver</PrimaryBtn>
         )}
       </StickyBottom>
     </div>
@@ -616,6 +626,11 @@ function CodigoScreen({ onNavigate, punto, monto }: { onNavigate: (s: Screen) =>
   const [showComo, setShowComo] = useState(false)
   const [showCancel, setShowCancel] = useState(false)
 
+  const openComo = () => { setShowComo(true); trackScreen('codigo-deposito-como-depositar') }
+  const closeComo = () => { setShowComo(false); trackScreen('codigo-deposito') }
+  const openCancel = () => { setShowCancel(true); trackScreen('codigo-deposito-cancelar') }
+  const closeCancel = () => { setShowCancel(false); trackScreen('codigo-deposito') }
+
   useEffect(() => {
     if (expired) return
     if (secondsLeft <= 0) { setExpired(true); return }
@@ -637,7 +652,7 @@ function CodigoScreen({ onNavigate, punto, monto }: { onNavigate: (s: Screen) =>
   return (
     <div style={{ background: dt.bg, height: '100%', fontFamily: F, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
       <StatusBar />
-      <AppHeader title="Depósito en efectivo" onClose={() => setShowCancel(true)} />
+      <AppHeader title="Depósito en efectivo" onClose={openCancel} />
       <div className="scroll-inner" style={{ flex: 1, overflowY: 'auto', padding: '4px 16px', display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div style={{ background: dt.white, borderRadius: 16, padding: '20px 16px', boxShadow: dt.shadow, borderTop: `4px solid ${dt.navy}`, opacity: expired ? 0.45 : 1, position: 'relative' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
@@ -675,9 +690,9 @@ function CodigoScreen({ onNavigate, punto, monto }: { onNavigate: (s: Screen) =>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <ActionRow icon={<HelpIco />} label="¿Cómo depositar?" onClick={() => setShowComo(true)} />
+          <ActionRow icon={<HelpIco />} label="¿Cómo depositar?" onClick={openComo} />
           <ActionRow icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2C7 2 3 6 3 11c0 6.5 9 11 9 11s9-4.5 9-11c0-5-4-9-9-9z" stroke={dt.navy} strokeWidth="1.6" /><circle cx="12" cy="11" r="3" stroke={dt.navy} strokeWidth="1.6" /></svg>} label="¿Dónde puedo depositar?" onClick={() => onNavigate('puntos')} />
-          <ActionRow icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m-8 0v13a1 1 0 001 1h8a1 1 0 001-1V7" stroke={dt.navy} strokeWidth="1.6" strokeLinecap="round" /></svg>} label="Cancelar depósito" onClick={() => setShowCancel(true)} />
+          <ActionRow icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m-8 0v13a1 1 0 001 1h8a1 1 0 001-1V7" stroke={dt.navy} strokeWidth="1.6" strokeLinecap="round" /></svg>} label="Cancelar depósito" onClick={openCancel} />
         </div>
       </div>
 
@@ -688,10 +703,10 @@ function CodigoScreen({ onNavigate, punto, monto }: { onNavigate: (s: Screen) =>
       </StickyBottom>
 
       {showComo && (
-        <Modal onClose={() => setShowComo(false)}>
+        <Modal onClose={closeComo}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
             <span style={{ fontFamily: F, fontWeight: 700, fontSize: 17, color: dt.navy }}>¿Cómo depositar?</span>
-            <button onClick={() => setShowComo(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><XIcon /></button>
+            <button onClick={closeComo} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><XIcon /></button>
           </div>
           <ol style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
             <li style={{ fontFamily: F, fontSize: 13, color: dt.t1, lineHeight: '19px' }}>Indica que quieres hacer un depósito con el número de convenio <strong>{codigoInterno}</strong>.</li>
@@ -699,19 +714,19 @@ function CodigoScreen({ onNavigate, punto, monto }: { onNavigate: (s: Screen) =>
             <li style={{ fontFamily: F, fontSize: 13, color: dt.t1, lineHeight: '19px' }}>Entrega el efectivo. El dinero ingresará a tu Cuenta Bold en segundos.</li>
           </ol>
           <div style={{ marginTop: 20 }}>
-            <PrimaryBtn onClick={() => setShowComo(false)}>Entendido</PrimaryBtn>
+            <PrimaryBtn onClick={closeComo}>Entendido</PrimaryBtn>
           </div>
         </Modal>
       )}
 
       {showCancel && (
-        <Modal onClose={() => setShowCancel(false)}>
+        <Modal onClose={closeCancel}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, textAlign: 'center' }}>
             <CancelIco />
             <span style={{ fontFamily: F, fontWeight: 700, fontSize: 17, color: dt.navy }}>¿Estás seguro que quieres cancelar esta transacción?</span>
             <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 10, marginTop: 4 }}>
               <PrimaryBtn onClick={() => onNavigate('dashboard')}>Sí, cancelar</PrimaryBtn>
-              <SecondaryBtn onClick={() => setShowCancel(false)}>No, continuar</SecondaryBtn>
+              <SecondaryBtn onClick={closeCancel}>No, continuar</SecondaryBtn>
             </div>
           </div>
         </Modal>
