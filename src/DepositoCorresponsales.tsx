@@ -241,6 +241,15 @@ function SecondaryBtn({ children, onClick }: { children: React.ReactNode; onClic
   )
 }
 
+// Logo de ejemplo — placeholder genérico hasta tener los logos reales de cada convenio
+function ConvenioLogoPlaceholder({ nombre }: { nombre: string }) {
+  return (
+    <div style={{ width: 32, height: 32, borderRadius: '50%', background: dt.navyLt, border: `1px solid ${dt.navyBdr}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <span style={{ fontFamily: F, fontWeight: 700, fontSize: 13, color: dt.navy }}>{nombre.charAt(0).toUpperCase()}</span>
+    </div>
+  )
+}
+
 function NuevoTag() {
   return (
     <div style={{ background: dt.coral, borderRadius: 100, padding: '2px 12px' }}>
@@ -558,14 +567,15 @@ function ConveniosScreen({ onNavigate, onSelectConvenio }: { onNavigate: (s: Scr
           <button
             key={c.superficie}
             onClick={() => { onSelectConvenio(c.superficie); onNavigate('convenio-puntos') }}
-            style={{ background: dt.white, border: 'none', borderRadius: 16, padding: '14px 16px', boxShadow: dt.shadow, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', textAlign: 'left' }}
+            style={{ background: dt.white, border: 'none', borderRadius: 16, padding: '14px 16px', boxShadow: dt.shadow, display: 'flex', alignItems: 'flex-start', gap: 12, cursor: 'pointer', textAlign: 'left' }}
           >
+            <ConvenioLogoPlaceholder nombre={c.superficie} />
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
               <span style={{ fontFamily: F, fontWeight: 700, fontSize: 14, color: dt.navy }}>{c.superficie}</span>
               <span style={{ fontFamily: F, fontSize: 12, color: dt.t2 }}>{c.puntos_disponibles.toLocaleString('es-CO')} puntos</span>
               <span style={{ background: dt.tagBg, borderRadius: 100, padding: '3px 10px', fontFamily: F, fontSize: 11, fontWeight: 600, color: dt.navy, alignSelf: 'flex-start' }}>Hasta {fmt(c.limite_maximo)}</span>
             </div>
-            <ChevR />
+            <div style={{ alignSelf: 'center' }}><ChevR /></div>
           </button>
         ))}
       </div>
