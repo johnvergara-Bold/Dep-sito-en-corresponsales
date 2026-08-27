@@ -177,6 +177,13 @@ const BankIco = () => (
     <path d="M3 19.5h18" stroke={dt.navy} strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 )
+const InfoIco = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+    <circle cx="10" cy="10" r="10" fill="#2F6FED" />
+    <rect x="9" y="9" width="2" height="6" rx="1" fill="white" />
+    <circle cx="10" cy="6" r="1.2" fill="white" />
+  </svg>
+)
 const StoreIco = () => (
   <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
     <path d="M4 4h16l1.5 5a2.3 2.3 0 01-4.3 1.4A2.3 2.3 0 0113 10a2.3 2.3 0 01-4.2.4A2.3 2.3 0 014.5 9L4 4z" stroke={dt.navy} strokeWidth="1.5" strokeLinejoin="round" />
@@ -763,6 +770,13 @@ function CodigoScreen({ onNavigate, backTo, punto, monto }: { onNavigate: (s: Sc
               <span style={{ fontFamily: F, fontSize: 12, color: dt.t1, textAlign: 'center' }}>Genera uno nuevo para continuar con tu depósito.</span>
             </div>
           )}
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+          <div style={{ flexShrink: 0, marginTop: 1 }}><InfoIco /></div>
+          <span style={{ fontFamily: F, fontWeight: 400, fontSize: 12, color: dt.t1, lineHeight: '16px' }}>
+            Con este código puedes hacer tu depósito en cualquier punto {punto.superficie}.
+          </span>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
