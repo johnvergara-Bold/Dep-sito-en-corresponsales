@@ -2,7 +2,7 @@
 // Mismo sistema de diseño que AdelantoNomina.jsx (Figma: Cuenta-Bold)
 import { useState, useEffect, useMemo } from 'react'
 import type { PuntoResuelto } from './mockData'
-import { resolverPuntos, codigoInternoDe, fmt, mockUser, mockCuenta } from './mockData'
+import { resolverPuntos, puntosDeConvenio, codigoInternoDe, fmt, mockUser, mockCuenta, convenios } from './mockData'
 
 // ── UX TRACKER (SDK cargado en index.html) ────────────────────────────────────
 declare global {
@@ -163,12 +163,6 @@ const ChevDown = ({ c = dt.navy, s = 24 }: { c?: string; s?: number }) => (
     <path d="M6 9l6 6 6-6" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
-const MoneyIco = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-    <rect x="2" y="6" width="20" height="13" rx="2.5" stroke={dt.navy} strokeWidth="1.5" />
-    <circle cx="12" cy="12.5" r="3" stroke={dt.navy} strokeWidth="1.5" />
-  </svg>
-)
 const ChargeIco = () => (
   <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
     <circle cx="11" cy="12" r="8" stroke={dt.navy} strokeWidth="1.5" />
@@ -287,16 +281,6 @@ function ActionRow({ icon, label, onClick }: { icon: React.ReactNode; label: str
       <span style={{ flex: 1, fontFamily: F, fontWeight: 700, fontSize: 14, color: dt.navy, textAlign: 'left' }}>{label}</span>
       <ChevR />
     </button>
-  )
-}
-
-function Barcode({ big = true }: { big?: boolean }) {
-  const bars = useMemo(() => Array.from({ length: 42 }, () => (Math.random() > 0.6 ? 3 : Math.random() > 0.3 ? 2 : 1)), [])
-  const h = big ? 64 : 34
-  return (
-    <div style={{ display: 'flex', alignItems: 'stretch', gap: 2, height: h, justifyContent: 'center' }}>
-      {bars.map((w, i) => <div key={i} style={{ width: w, background: dt.t1, borderRadius: 1 }} />)}
-    </div>
   )
 }
 
@@ -444,10 +428,10 @@ function MetodoBottomSheet({ onClose, onToast, onSelectCorresponsales }: { onClo
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center' }}>
-          <GridCard ico={<MoneyIco />} title="Efectivo" sub="Puntos Efecty" enabled={false} onClick={() => {}} />
           <GridCard ico={<ChargeIco />} title="PSE" sub="Otros bancos" enabled={false} onClick={() => {}} />
           <GridCard ico={<BankIco />} title="Efectivo o cheque" sub="Banco de Bogota" tag enabled={false} onClick={() => {}} />
-          <GridCard ico={<StoreIco />} title="Corresponsales" sub="Puntos físicos" tag enabled onClick={onSelectCorresponsales} />
+          <GridCard ico={<StoreIco />} title="Efectivo" sub="Corresponsales" tag enabled onClick={onSelectCorresponsales} />
+          <div style={{ flex: '1 0 0', minWidth: 155, opacity: 0, pointerEvents: 'none' }} aria-hidden="true" />
         </div>
 
         <button onClick={() => onToast('Función no disponible en este prototipo')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
@@ -553,12 +537,96 @@ function PuntosScreen({ onNavigate, onToast, onSelectPunto }: { onNavigate: (s: 
           <div style={{ textAlign: 'center', padding: '32px 0', fontFamily: F, fontSize: 13, color: dt.t2 }}>No encontramos puntos con ese nombre.</div>
         )}
       </div>
+      <StickyBottom>
+        <PrimaryBtn onClick={() => onNavigate('convenios')}>Ver todos los convenios</PrimaryBtn>
+      </StickyBottom>
+    </div>
+  )
+}
+
+// ── SCREEN 4B — LISTA DE CONVENIOS DISPONIBLES ───────────────────────────────
+function ConveniosScreen({ onNavigate, onSelectConvenio }: { onNavigate: (s: Screen) => void; onSelectConvenio: (superficie: string) => void }) {
+  const ordenados = useMemo(() => [...convenios].sort((a, b) => a.superficie.localeCompare(b.superficie)), [])
+
+  return (
+    <div style={{ background: dt.bg, height: '100%', fontFamily: F, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <StatusBar />
+      <AppHeader title="Convenios disponibles" onBack={() => onNavigate('puntos')} />
+      <div className="scroll-inner" style={{ flex: 1, overflowY: 'auto', padding: '4px 16px 24px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <span style={{ fontFamily: F, fontSize: 12, color: dt.t2 }}>Puedes depositar en cualquiera de estos convenios a nivel nacional</span>
+        {ordenados.map(c => (
+          <button
+            key={c.superficie}
+            onClick={() => { onSelectConvenio(c.superficie); onNavigate('convenio-puntos') }}
+            style={{ background: dt.white, border: 'none', borderRadius: 16, padding: '14px 16px', boxShadow: dt.shadow, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', textAlign: 'left' }}
+          >
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <span style={{ fontFamily: F, fontWeight: 700, fontSize: 14, color: dt.navy }}>{c.superficie}</span>
+              <span style={{ fontFamily: F, fontSize: 12, color: dt.t2 }}>{c.puntos_disponibles.toLocaleString('es-CO')} puntos</span>
+              <span style={{ background: dt.tagBg, borderRadius: 100, padding: '3px 10px', fontFamily: F, fontSize: 11, fontWeight: 600, color: dt.navy, alignSelf: 'flex-start' }}>Hasta {fmt(c.limite_maximo)}</span>
+            </div>
+            <ChevR />
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ── SCREEN 4C — PUNTOS DE UN CONVENIO ESPECÍFICO ─────────────────────────────
+function ConvenioPuntosScreen({ superficie, onNavigate, onToast, onSelectPunto }: { superficie: string; onNavigate: (s: Screen) => void; onToast: (m: string) => void; onSelectPunto: (p: PuntoResuelto) => void }) {
+  const puntos = useMemo(() => puntosDeConvenio(superficie), [superficie])
+  const [query, setQuery] = useState('')
+  const filtered = puntos.filter(p =>
+    p.nombre_comercial.toLowerCase().includes(query.toLowerCase()) ||
+    p.direccion.toLowerCase().includes(query.toLowerCase())
+  )
+
+  return (
+    <div style={{ background: dt.bg, height: '100%', fontFamily: F, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <StatusBar />
+      <AppHeader title={`Puntos de ${superficie}`} onBack={() => onNavigate('convenios')} />
+      <div style={{ padding: '4px 16px 10px' }}>
+        <div style={{ background: dt.white, borderRadius: 100, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 8, boxShadow: dt.shadow }}>
+          <SearchIco />
+          <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Buscar" style={{ border: 'none', outline: 'none', flex: 1, fontFamily: F, fontSize: 13, color: dt.t1, background: 'transparent' }} />
+        </div>
+      </div>
+      <div className="scroll-inner" style={{ flex: 1, overflowY: 'auto', padding: '0 16px 24px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <span style={{ fontFamily: F, fontSize: 12, color: dt.t2 }}>Puntos disponibles de este convenio</span>
+        {filtered.map(p => {
+          const disabled = !p.abierto
+          return (
+            <div
+              key={p.nombre_comercial}
+              onClick={() => disabled ? onToast('Este punto está cerrado en este momento.') : (onSelectPunto(p), onNavigate('monto'))}
+              style={{ background: disabled ? dt.navyLt : dt.white, borderRadius: 16, padding: '14px 16px', boxShadow: disabled ? 'none' : dt.shadow, cursor: disabled ? 'default' : 'pointer', display: 'flex', flexDirection: 'column', gap: 6, opacity: disabled ? 0.6 : 1 }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                <span style={{ fontFamily: F, fontWeight: 700, fontSize: 14, color: dt.navy }}>{p.nombre_comercial}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: p.abierto ? dt.green : dt.t3, display: 'inline-block' }} />
+                  <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: p.abierto ? '#0D5C3A' : dt.t2 }}>{p.abierto ? 'Abierto' : 'Cerrado'}</span>
+                </div>
+              </div>
+              <span style={{ fontFamily: F, fontSize: 12, color: dt.t1 }}>{p.direccion}</span>
+              <span style={{ fontFamily: F, fontSize: 11, color: dt.t2 }}>{p.horario} · {p.distancia_km.toFixed(1)} km</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                <span style={{ background: dt.tagBg, borderRadius: 100, padding: '3px 10px', fontFamily: F, fontSize: 11, fontWeight: 600, color: dt.navy }}>Hasta {fmt(p.limite_maximo)}</span>
+              </div>
+            </div>
+          )
+        })}
+        {filtered.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '32px 0', fontFamily: F, fontSize: 13, color: dt.t2 }}>No encontramos puntos con ese nombre.</div>
+        )}
+      </div>
     </div>
   )
 }
 
 // ── SCREEN 5 — INGRESO DE MONTO ──────────────────────────────────────────────
-function MontoScreen({ onNavigate, punto, monto, setMonto }: { onNavigate: (s: Screen) => void; punto: PuntoResuelto; monto: number; setMonto: (n: number) => void }) {
+function MontoScreen({ onNavigate, backTo, punto, monto, setMonto }: { onNavigate: (s: Screen) => void; backTo: Screen; punto: PuntoResuelto; monto: number; setMonto: (n: number) => void }) {
   const [raw, setRaw] = useState(monto > 0 ? String(monto) : '')
   const value = raw === '' ? 0 : parseInt(raw, 10)
 
@@ -578,7 +646,7 @@ function MontoScreen({ onNavigate, punto, monto, setMonto }: { onNavigate: (s: S
   return (
     <div style={{ background: dt.bg, height: '100%', fontFamily: F, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <StatusBar />
-      <AppHeader title="Ingresa el monto" onBack={() => onNavigate('puntos')} onClose={() => onNavigate('dashboard')} />
+      <AppHeader title="Ingresa el monto" onBack={() => onNavigate(backTo)} onClose={() => onNavigate('dashboard')} />
       <div className="scroll-inner" style={{ flex: 1, overflowY: 'auto', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 20 }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '20px 0 4px' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
@@ -619,7 +687,7 @@ function MontoScreen({ onNavigate, punto, monto, setMonto }: { onNavigate: (s: S
 }
 
 // ── SCREEN 6 — CÓDIGO DE DEPÓSITO ────────────────────────────────────────────
-function CodigoScreen({ onNavigate, punto, monto }: { onNavigate: (s: Screen) => void; punto: PuntoResuelto; monto: number }) {
+function CodigoScreen({ onNavigate, backTo, punto, monto }: { onNavigate: (s: Screen) => void; backTo: Screen; punto: PuntoResuelto; monto: number }) {
   const [secondsLeft, setSecondsLeft] = useState(1800)
   const [expired, setExpired] = useState(false)
   const [codigoDeposito, setCodigoDeposito] = useState(() => randomDigits(6))
@@ -641,7 +709,6 @@ function CodigoScreen({ onNavigate, punto, monto }: { onNavigate: (s: Screen) =>
   const mm = String(Math.floor(secondsLeft / 60)).padStart(2, '0')
   const ss = String(secondsLeft % 60).padStart(2, '0')
   const codigoInterno = codigoInternoDe(punto.superficie)
-  const tieneBarras = punto.metodo !== 'manual'
 
   const handleNuevoCodigo = () => {
     setCodigoDeposito(randomDigits(6))
@@ -660,10 +727,9 @@ function CodigoScreen({ onNavigate, punto, monto }: { onNavigate: (s: Screen) =>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
               <span style={{ fontFamily: F, fontWeight: 700, fontSize: 16, color: dt.navy }}>Código de depósito</span>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, margin: '12px 0 8px' }}>
-                {tieneBarras && <Barcode big />}
                 <span style={{ fontFamily: F, fontWeight: 400, fontSize: 32, color: dt.navy }}>{codigoDeposito}</span>
               </div>
-              <span style={{ fontFamily: F, fontSize: 12, color: dt.navy60, textAlign: 'center' }}>Presenta el código de barras o tu código numérico</span>
+              <span style={{ fontFamily: F, fontSize: 12, color: dt.navy60, textAlign: 'center' }}>Presenta este código numérico en la ventanilla</span>
             </div>
           </div>
 
@@ -691,7 +757,7 @@ function CodigoScreen({ onNavigate, punto, monto }: { onNavigate: (s: Screen) =>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <ActionRow icon={<HelpIco />} label="¿Cómo depositar?" onClick={openComo} />
-          <ActionRow icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2C7 2 3 6 3 11c0 6.5 9 11 9 11s9-4.5 9-11c0-5-4-9-9-9z" stroke={dt.navy} strokeWidth="1.6" /><circle cx="12" cy="11" r="3" stroke={dt.navy} strokeWidth="1.6" /></svg>} label="¿Dónde puedo depositar?" onClick={() => onNavigate('puntos')} />
+          <ActionRow icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2C7 2 3 6 3 11c0 6.5 9 11 9 11s9-4.5 9-11c0-5-4-9-9-9z" stroke={dt.navy} strokeWidth="1.6" /><circle cx="12" cy="11" r="3" stroke={dt.navy} strokeWidth="1.6" /></svg>} label="¿Dónde puedo depositar?" onClick={() => onNavigate(backTo)} />
           <ActionRow icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m-8 0v13a1 1 0 001 1h8a1 1 0 001-1V7" stroke={dt.navy} strokeWidth="1.6" strokeLinecap="round" /></svg>} label="Cancelar depósito" onClick={openCancel} />
         </div>
       </div>
@@ -811,12 +877,14 @@ function ComprobanteScreen({ onNavigate, onToast, punto, monto }: { onNavigate: 
 }
 
 // ── ROOT ──────────────────────────────────────────────────────────────────────
-type Screen = 'dashboard' | 'permiso' | 'puntos' | 'monto' | 'codigo' | 'comprobante'
+type Screen = 'dashboard' | 'permiso' | 'puntos' | 'convenios' | 'convenio-puntos' | 'monto' | 'codigo' | 'comprobante'
 
 const SCREEN_TRACKING_NAMES: Record<Screen, string> = {
   dashboard: 'dashboard',
   permiso: 'permiso-ubicacion',
   puntos: 'puntos-cercanos',
+  convenios: 'lista-convenios',
+  'convenio-puntos': 'convenio-puntos',
   monto: 'monto-deposito',
   codigo: 'codigo-deposito',
   comprobante: 'comprobante',
@@ -828,11 +896,12 @@ export default function DepositoCorresponsales() {
   const [monto, setMonto] = useState(0)
   const [toast, setToast] = useState<string | null>(null)
   const [showMetodo, setShowMetodo] = useState(false)
+  const [selectedConvenio, setSelectedConvenio] = useState<string | null>(null)
 
   useEffect(() => { trackScreen(SCREEN_TRACKING_NAMES.dashboard) }, [])
 
   const nav = (s: Screen) => {
-    if (s === 'dashboard') { setPunto(null); setMonto(0) }
+    if (s === 'dashboard') { setPunto(null); setMonto(0); setSelectedConvenio(null) }
     setScreen(s)
     trackScreen(SCREEN_TRACKING_NAMES[s])
   }
@@ -857,8 +926,10 @@ export default function DepositoCorresponsales() {
       case 'dashboard':    return <DashboardScreen onToast={showToast} onOpenMetodo={openMetodo} />
       case 'permiso':      return <PermisoScreen onNavigate={nav} onToast={showToast} />
       case 'puntos':       return <PuntosScreen onNavigate={nav} onToast={showToast} onSelectPunto={setPunto} />
-      case 'monto':        return punto && <MontoScreen onNavigate={nav} punto={punto} monto={monto} setMonto={setMonto} />
-      case 'codigo':       return punto && <CodigoScreen onNavigate={nav} punto={punto} monto={monto} />
+      case 'convenios':    return <ConveniosScreen onNavigate={nav} onSelectConvenio={setSelectedConvenio} />
+      case 'convenio-puntos': return selectedConvenio && <ConvenioPuntosScreen superficie={selectedConvenio} onNavigate={nav} onToast={showToast} onSelectPunto={setPunto} />
+      case 'monto':        return punto && <MontoScreen onNavigate={nav} backTo={selectedConvenio ? 'convenio-puntos' : 'puntos'} punto={punto} monto={monto} setMonto={setMonto} />
+      case 'codigo':       return punto && <CodigoScreen onNavigate={nav} backTo={selectedConvenio ? 'convenio-puntos' : 'puntos'} punto={punto} monto={monto} />
       case 'comprobante':  return punto && <ComprobanteScreen onNavigate={nav} onToast={showToast} punto={punto} monto={monto} />
       default:             return <DashboardScreen onToast={showToast} onOpenMetodo={openMetodo} />
     }
